@@ -6,7 +6,7 @@ import telebot
 import datetime
 import json
 
-bot_token = '1659740201:AAENsxDqoODhfh7s8Te3paaJb1FJXo-0jJ4'
+bot_token = 'TOKEN'
 bot = telebot.TeleBot(bot_token)
 bot_name = "@lgbtqia_german_bot"
 
