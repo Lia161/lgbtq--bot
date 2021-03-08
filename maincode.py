@@ -20,8 +20,14 @@ while True:
     with open('LGBTQ+.json') as json_file:
         data = json.load(json_file)
 
+    @bot.message_handler(commands=['start'])
+    def send_start(message):
+        bot.delete_message(message.chat.id, message.message_id)
+        bot.send_message(message.chat.id, "Hi, ich bin der Bot der Gruppe @LGBTQFlintaGerman. Sende /help für mehr!")
+
     @bot.message_handler(commands=['welcome'])
     def new(message):
+        bot.delete_message(message.chat.id, message.message_id)
         bot.reply_to(message, data["welcome"])
 
     @bot.message_handler(content_types=['new_chat_members'])
@@ -31,6 +37,10 @@ while True:
             for i in data["users"]["Banned"]:
                 if i["user_id"] == userId:
                     bot.kick_chat_member(message.chat.id, userId)
+
+                    @bot.message_handler(content_types='left_chat_member')
+                    def del_left_message(message2):
+                        bot.delete_message(message2.chat.id, message2.message_id)
                     bot.reply_to(message, f"Nutzer*in gebannt. Grund: {i['reason']}")
             else:
                 bot.reply_to(message, data["welcome"])
@@ -56,7 +66,8 @@ while True:
             bot.kick_chat_member(message.chat.id, user.id)
             banned_user = {"user_id": user.id, "reason": reason}
             data["users"]["Banned"].append(banned_user)
-            data["users"]["Joined"].remove(user.id)
+            if user.id in data["users"]["Joined"]:
+                data["users"]["Joined"].remove(user.id)
             json_write(data)
             bot.reply_to(message, f"{user.first_name} wurde gekickt! Grund: {reason}")
         except AttributeError:
@@ -66,11 +77,13 @@ while True:
             elif len_message == 2:
                 userId = message.text.split()[1]
                 bot.kick_chat_member(message.chat.id, userId)
-                banned_user = {"user_id": userId, "reason": "None"}
+                reason = "None"
+                banned_user = {"user_id": userId, "reason": reason}
                 data["users"]["Banned"].append(banned_user)
-                data["users"]["Joined"].remove(userId)
+                if userId in data["users"]["Joined"]:
+                    data["users"]["Joined"].remove(userId)
                 json_write(data)
-                bot.reply_to(message, f"Nutzer*in wurde gekickt!")
+                bot.reply_to(message, f"Nutzer*in wurde gekickt! Grund: {reason}")
             else:
                 userId = message.text.split()[1]
                 len_until_reason = len(message.text[:len(message.text.split()[0] + message.text.split()[1])])
@@ -78,7 +91,8 @@ while True:
                 bot.kick_chat_member(message.chat.id, userId)
                 banned_user = {"user_id": userId, "reason": reason}
                 data["users"]["Banned"].append(banned_user)
-                data["users"]["Joined"].remove(userId)
+                if userId in data["users"]["Joined"]:
+                    data["users"]["Joined"].remove(userId)
                 json_write(data)
                 bot.reply_to(message, f"Nutzer*in wurde gekickt!\nGrund: {reason}")
 
@@ -119,7 +133,6 @@ while True:
     def member_left(message):
         user = message.left_chat_member
         data["users"]["Joined"].remove(user.id)
-        json_write(data)
         bot.reply_to(message, f"{user.first_name} hat die Gruppe verlassen.")
         json_write(data)
         bot.delete_message(message.chat.id, message.chat.id)
