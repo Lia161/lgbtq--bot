@@ -64,7 +64,7 @@ while True:
             except AttributeError:
                 reason = "None"
             bot.kick_chat_member(message.chat.id, user.id)
-            banned_user = {"user_id": user.id, "reason": reason}
+            banned_user = {"user_id": int(user.id), "reason": reason}
             data["users"]["Banned"].append(banned_user)
             if user.id in data["users"]["Joined"]:
                 data["users"]["Joined"].remove(user.id)
@@ -78,7 +78,7 @@ while True:
                 userId = message.text.split()[1]
                 bot.kick_chat_member(message.chat.id, userId)
                 reason = "None"
-                banned_user = {"user_id": userId, "reason": reason}
+                banned_user = {"user_id": int(userId), "reason": reason}
                 data["users"]["Banned"].append(banned_user)
                 if userId in data["users"]["Joined"]:
                     data["users"]["Joined"].remove(userId)
@@ -89,7 +89,7 @@ while True:
                 len_until_reason = len(message.text[:len(message.text.split()[0] + message.text.split()[1])])
                 reason = message.text[len_until_reason:]
                 bot.kick_chat_member(message.chat.id, userId)
-                banned_user = {"user_id": userId, "reason": reason}
+                banned_user = {"user_id": int(userId), "reason": reason}
                 data["users"]["Banned"].append(banned_user)
                 if userId in data["users"]["Joined"]:
                     data["users"]["Joined"].remove(userId)
@@ -98,7 +98,7 @@ while True:
 
         @bot.message_handler(content_types='left_chat_member')
         def member_got_kicked(message2):
-            bot.delete_message(message2.chat.id, message2.id)
+            bot.delete_message(message2.chat.id, message2.message_id)
         json_write(data)
 
     @bot.message_handler(commands=['set_welcome'])
@@ -178,7 +178,7 @@ while True:
             bot.unban_chat_member(message.chat.id, user.id)
             for i in data["users"]["Banned"]:
                 if i["user_id"] == user.id:
-                    i.remove(user.id)
+                    data["users"]["Banned"].remove(i)
             bot.reply_to(message, f"{user.first_name} wurde eine weitere chance gegeben!")
         except AttributeError:
             len_message = len(message.text.split())
@@ -189,7 +189,7 @@ while True:
                 bot.unban_chat_member(message.chat.id, userId)
                 for i in data["users"]["Banned"]:
                     if i["user_id"] == userId:
-                        i.remove(userId)
+                        data["users"]["Banned"].remove(i)
                 bot.reply_to(message, f"{userId} wurde eine weitere chance gegeben!")
             else:
                 userId = message.text.split()[1]
