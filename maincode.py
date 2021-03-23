@@ -19,9 +19,6 @@ def json_write(datta, filename='LGBTQ+.json'):
 with open('LGBTQ+.json') as json_file:
     data = json.load(json_file)
 
-with open('LGBTQ+.json') as json_file:
-    data = json.load(json_file)
-
 @bot.message_handler(commands=['start'])
 def send_start(message):
     bot.delete_message(message.chat.id, message.message_id)
