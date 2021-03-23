@@ -177,11 +177,13 @@ def warn_user(message):
 def unban_user(message):
     try:
         user = message.reply_to_message.from_user
-        bot.unban_chat_member(message.chat.id, user.id)
+        bot.unban_chat_member(message.chat.id, user.id,only_if_banned=True)
         for i in data["users"]["Banned"]:
             if i["user_id"] == user.id:
                 data["users"]["Banned"].remove(i)
-        bot.reply_to(message, f"{user.first_name} wurde eine weitere chance gegeben!")
+                bot.reply_to(message, f"{user.first_name} wurde eine weitere chance gegeben!")
+        if user.id not in data["users"]["Banned"]:
+            bot.reply_to(message,f"{user.first_name} ist noch in der Gruppe!")
     except AttributeError:
         len_message = len(message.text.split())
         if len_message < 2:
