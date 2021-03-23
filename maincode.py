@@ -54,7 +54,7 @@ def rules(message):
     bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     bot.send_message(message.chat.id, "Das sind die Regeln der LGBTQ+ German Gruppe 🌈🏳️‍🌈🏳️‍⚧:\n\n"+data["rules"])
 
-@bot.message_handler(commands=['kick', 'ban'])
+@bot.message_handler(commands=['kick'])
 def kick_person(message):
     try:
         user = message.reply_to_message.from_user
@@ -176,7 +176,7 @@ def warn_user(message):
 @bot.message_handler(commands=['unban'])
 def unban_user(message):
     try:
-        user = message.reply_to_message
+        user = message.reply_to_message.from_user
         bot.unban_chat_member(message.chat.id, user.id)
         for i in data["users"]["Banned"]:
             if i["user_id"] == user.id:
