@@ -6,7 +6,7 @@ import telebot
 import datetime
 import json
 
-bot_token = '1659740201:AAH6FCQaplyxUqlO__Tdll9Zpjwu6Snvenk'
+bot_token = '<TOKEN>'
 bot = telebot.TeleBot(bot_token)
 bot_name = "@lgbtqia_german_bot"
 
@@ -46,7 +46,6 @@ def new(message):
             joined_users = data["users"]["Joined"]
             joined_users.append(userId)
             json_write(data)
-    bot.delete_message(message.chat.id, message.id)
     json_write(data)
 
 @bot.message_handler(commands=['rules'])
